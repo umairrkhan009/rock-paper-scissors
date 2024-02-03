@@ -1,82 +1,56 @@
-function getComputerChoice(){
-    const options=["rock","paper","scissors"]
+function getComputerChoice() {
+    const options = ["rock", "paper", "scissor"]
     return options[Math.floor(Math.random() * options.length)]
 }
 
+const buttons = document.querySelectorAll('input')
 
-function playRound(playerSelection,computerSelection){
-    playerSelection=prompt("Enter your play: ")
-    if(playerSelection=== undefined|| playerSelection===null || playerSelection===""){
-        alert("Canceled")
-        return;
-    }
-    else{
-        playerSelection.toLowerCase();
-        console.log("You played", playerSelection)
-    }
-    
-    computerSelection=getComputerChoice();
-    console.log("Computer played- ",computerSelection)
+buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+        playRound(button.value)
+    })
+})
 
-    if(playerSelection===computerSelection){
-        return result="Tie"
-    }
-    else{
-        if(playerSelection==="rock"){
-            if(computerSelection==="paper"){
-                return result=  "Computer Wins! Paper beats Rock."
-            }
-            else{
-                return result="You Win! Rock beats Scissor"
-            }
-        }
-        else if(playerSelection==="paper"){
-            if(computerSelection==="rock"){
-                return result="You Win! Paper beats Rock."
-            }
-            else{
-                return result="Computer Wins! Scissors beat Rock"
-            }
-        } 
-        
-        else if(playerSelection==="scissors"){
-            if(computerSelection==="paper"){
-                return result="You Win! Scissors beat Paper"
-            }
-            else{
-                return result="Computer Wins! Rock beats Scissor"
-            }
-        }
-
-        else{
-            return result="Enter a correct value"
-        }
-}
+function disableButton(){
+    buttons.forEach(elem => {
+        elem.disabled=true
+    })
 }
 
-function game(){
-    let userCount=0,compCount=0;
-    for(let i=0; i<=4;i++){
-        playRound();
-        console.log(result)
-        if (result==="Tie"){
-            i--;
-            console.log("Your wins- ",userCount + " Computer Wins- ", compCount)
+let userCount=0;
+let compCount=0;
+
+function playRound(playerSelection,computerSelection=getComputerChoice()){
+    let result =''
+
+    if(playerSelection=='rock' && computerSelection=='scissor' ||
+    playerSelection=='paper' && computerSelection=='rock' ||
+    playerSelection=='scissor' && computerSelection=='paper'){
+        userCount+=1
+
+        result="You win! "+ playerSelection+" beats "+computerSelection+"<br><br>Player Score "+userCount+"<br>Computer Score "+compCount
+
+        if(userCount===5){
+            result+= "<br><br>You won the game. Reload the page to play again."
+            disableButton()
         }
-        else if(result==="You Win! Scissors beat Paper"|| result==="You Win! Paper beats Rock."||result==="You Win! Rock beats Scissor"){
-            userCount++;
-            console.log("Your wins- ",userCount + " Computer Wins- ", compCount)
+    }
+
+    else if(playerSelection=='rock' && computerSelection=='paper' ||
+    playerSelection=='paper' && computerSelection=='scissor' ||
+    playerSelection=='scissor' && computerSelection=='rock'){
+        compCount+=1
+        result="You lose! "+ computerSelection+" beats "+playerSelection+"<br><br>Player Score "+userCount+"<br>Computer Score "+compCount
+        if(compCount===5){
+            result+="<br><br> Computer won the game. Reload the page to try again."
+            disableButton()
         }
-        else if(result==="Computer Wins! Paper beats Rock."||result==="Computer Wins! Scissors beat Rock"||result==="Computer Wins! Rock beats Scissor"){
-            compCount++;
-            console.log("Your wins- ",userCount + " Computer Wins- ", compCount)
-        }
-        
     }
-    if(userCount>compCount){
-        return "You are the final winner"
+
+    else{
+        result="Its a tie! You both chose " + playerSelection + "<br><br>Player Score "+userCount+"<br>Computer Score "+compCount
     }
-    else if(compCount>userCount){
-        return "Computer is the final winner"
-    }
+
+    document.getElementById('result').innerHTML=result
+    return
 }
